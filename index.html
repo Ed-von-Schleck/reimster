@@ -34,12 +34,22 @@
       }
       #rhymes {
         font-size: 150%;
+        text-align: justify;
+      }
+      #rhymes p {
+        padding: 1em 0 1em 0;
+        border-bottom: 3px solid #111;
+      }
+      #rhymes span {
+        padding-right: 0.5em;
+      }
+      #rhymes a {
+        /* white-space: nowrap; */
       }
       #header {
-        padding-top: 4em;
-        padding-bottom: 3em;
+        padding: 5em;
         background-color: #74AFAD;
-        margin-bottom: 2.5em;
+        margin-bottom: 1.3em;
         box-shadow: 0 0 1em #666;
       }
       #header p {
@@ -59,7 +69,7 @@
       footer {
         margin-top: 1em;
         padding-top: 1em;
-        border-top: 3px solid #111;
+        opacity: 0;
       }
       footer a {
         font-weight: bold;
@@ -116,12 +126,20 @@
     -->
     <script src="reimster.js"></script>
     <script>
+    var current = null;
     var update_rhymes = function() {
+      var word = $("#search").val().toLowerCase();
+      if (word === current)
+        return;
+      current = word;
+      $("#rhymes").children().hide(100, function() {
+          $(this).remove();
+      });
+
       var word = $("#search").val().toLowerCase();
       var word_rhymes = rhymes[word];
       if (word_rhymes === undefined)
         return;
-      $("#rhymes").empty();
 
       var words_p = document.createElement("p");
       var word_rhymes_length = word_rhymes.length;
@@ -134,11 +152,13 @@
         var word_a = document.createElement("a");
         word_a.textContent = rhyme[0] + " ";
         word_a.href = "https://de.wiktionary.org/wiki/" + rhyme[0];
-        word_span.style.fontSize = (rhyme[1] * 100) + "%";
+        word_span.style.fontSize = (Math.sqrt(rhyme[1]) * 100) + "%";
         word_span.appendChild(word_a);
         words_p.appendChild(word_span);
       }
+      words_p.style.display = "none";
       $("#rhymes").append(words_p);
+      $(words_p).show(100);
     };
     $("#search").keyup(function() {
         $("#hint").animate({opacity: 0.0});
@@ -146,10 +166,16 @@
     });
 
     $(document).ready(function() {
-      $("#hint").animate({opacity: 1.0});
+      $("footer").animate({opacity: 1.0}, 1000);
+      $("#hint").animate({opacity: 1.0}, 1000);
       update_rhymes();
 
     })
+    $("#search").blur(function() {
+      setTimeout(function () {
+        $("#search").focus();
+      }, 0);
+    });
     </script>
   </body>
 </html>
