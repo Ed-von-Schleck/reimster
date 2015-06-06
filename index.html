@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Reimster</title>
+<!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+      #search {
+        height: 1.5em;
+        vertical-align: middle;
+        border: 0;
+        border-bottom: 0.05em solid #ECECEA;
+        font-size: 500%;
+        width: 100%;
+        background: transparent;
+        color: #ECECEA;
+        font-weight: bold;
+        //text-shadow: 0 0 3px #558C89;
+      }
+      #rhymes {
+        font-size: 150%;
+      }
+      #header {
+        padding-top: 4em;
+        padding-bottom: 3em;
+        background-color: #74AFAD;
+        margin-bottom: 2.5em;
+        box-shadow: 0 0 1em #666;
+      }
+      #header p {
+        margin-top: 1em;
+        font-weight: bold;
+      }
+      body {
+        background-color: #ECECEA;
+      }
+      a {
+        color: #111;
+      }
+      a:hover {
+        text-decoration: None;
+        color: #367588;
+      }
+      footer {
+        margin-top: 1em;
+        padding-top: 1em;
+        border-top: 3px solid #111;
+      }
+      footer a {
+        font-weight: bold;
+      }
+      #top-bar {
+        background-color: #558C89;
+        color: #D9853B;
+      }
+      #hint {
+        opacity: 0;
+        color: #333;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!--
+    <div id="top-bar">
+      <div class="container">
+        <h1>Reimster</h1>
+      </div>
+    </div>
+    -->
+    <div id="header">
+      <div class="container">
+        <input type="text" id="search" placeholder="Reimster" autofocus="autofocus">
+        <p id="hint">Tippe, um einen Reim zu finden</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="rhymes">
+      </div>
+      <footer>
+        <p>
+          Alle Wörter mit Ausspracheregeln sind ohne Änderung vom deutschen <a href="https://de.wiktionary.org">Wiktionary Projekt</a> übernommen und unter der Lizenz <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.de">''Creative-Commons''-Lizenz „Namensnennung – Weitergabe unter gleichen Bedingungen“</a> verfügbar. Vielen Dank an alle, die dazu beigetragen haben!</p>
+        <p>
+          <em>Reimster</em> ist ein Projekt von Christian Schramm.
+        </p>
+        </p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--
+      <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    -->
+    <script src="reimster.js"></script>
+    <script>
+    var update_rhymes = function() {
+      var word = $("#search").val().toLowerCase();
+      var word_rhymes = rhymes[word];
+      if (word_rhymes === undefined)
+        return;
+      $("#rhymes").empty();
+
+      var words_p = document.createElement("p");
+      var word_rhymes_length = word_rhymes.length;
+
+      for (var i = 0; i < word_rhymes_length; i++) {
+        var rhyme = word_rhymes[i];
+        if (rhyme[0].toLowerCase() === word)
+          continue;
+        var word_span = document.createElement("span");
+        var word_a = document.createElement("a");
+        word_a.textContent = rhyme[0] + " ";
+        word_a.href = "https://de.wiktionary.org/wiki/" + rhyme[0];
+        word_span.style.fontSize = (rhyme[1] * 100) + "%";
+        word_span.appendChild(word_a);
+        words_p.appendChild(word_span);
+      }
+      $("#rhymes").append(words_p);
+    };
+    $("#search").keyup(function() {
+        $("#hint").animate({opacity: 0.0});
+        update_rhymes();
+    });
+
+    $(document).ready(function() {
+      $("#hint").animate({opacity: 1.0});
+      update_rhymes();
+
+    })
+    </script>
+  </body>
+</html>
