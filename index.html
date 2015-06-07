@@ -5,14 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Das bessere Reimlexikon">
+    <meta name="author" content="Christian Schramm">
     <link rel="icon" href="../../favicon.ico">
 
     <title>Reimster</title>
-<!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -30,7 +28,6 @@
         background: transparent;
         color: #ECECEA;
         font-weight: bold;
-        //text-shadow: 0 0 3px #558C89;
       }
       #rhymes {
         font-size: 150%;
@@ -42,9 +39,6 @@
       }
       #rhymes span {
         padding-right: 0.5em;
-      }
-      #rhymes a {
-        /* white-space: nowrap; */
       }
       #header {
         padding: 5em 0 5em 0;
@@ -60,11 +54,12 @@
         background-color: #ECECEA;
       }
       a {
-        color: #111;
+        color: #444;
       }
       a:hover {
         text-decoration: None;
         color: #367588;
+        text-shadow: 0 0 2px white;
       }
       footer {
         margin-top: 1em;
@@ -87,13 +82,6 @@
 
   <body>
 
-    <!--
-    <div id="top-bar">
-      <div class="container">
-        <h1>Reimster</h1>
-      </div>
-    </div>
-    -->
     <div id="header">
       <div class="container">
         <input type="text" id="search" placeholder="Reimster" autofocus="autofocus">
@@ -119,7 +107,9 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!--
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    -->
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!--
       <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
@@ -131,6 +121,9 @@
       var word = $("#search").val().toLowerCase();
       if (word === current)
         return;
+      if (word === "")
+        $("#hint").animate({opacity: 1.0});
+
       current = word;
       $("#rhymes").children().hide(100, function() {
           $(this).remove();
@@ -138,38 +131,53 @@
 
       var word = $("#search").val().toLowerCase();
       var word_rhymes = rhymes[word];
-      if (word_rhymes === undefined)
+      if (word_rhymes === undefined) {
+        window.location.hash = "";
         return;
+      }
 
       var words_p = document.createElement("p");
       var word_rhymes_length = word_rhymes.length;
+      var ending = null;
+      for (var i = 0; i < word_rhymes_length; i++) {
+        var rhyme = word_rhymes[i];
+        if (rhyme[0].toLowerCase() === word) {
+          ending = rhyme[2];
+          break;
+        }
+      }
 
       for (var i = 0; i < word_rhymes_length; i++) {
         var rhyme = word_rhymes[i];
-        if (rhyme[0].toLowerCase() === word)
+        console.log(rhyme)
+        if ((rhyme[0].toLowerCase() === word) || (rhyme[2] == ending))
           continue;
         var word_span = document.createElement("span");
         var word_a = document.createElement("a");
         word_a.textContent = rhyme[0] + " ";
         word_a.href = "https://de.wiktionary.org/wiki/" + rhyme[0];
-        word_span.style.fontSize = (Math.sqrt(rhyme[1]) * 100) + "%";
+        word_span.style.fontSize = rhyme[1] + "%";
         word_span.appendChild(word_a);
         words_p.appendChild(word_span);
       }
       words_p.style.display = "none";
       $("#rhymes").append(words_p);
       $(words_p).show(100);
+      // For capitalized words
+      window.location.hash = "#" + $("#search").val();
     };
     $("#search").keyup(function() {
-        $("#hint").animate({opacity: 0.0});
+        $("#hint").animate({opacity: 0.0}, 100);
         update_rhymes();
     });
 
     $(document).ready(function() {
       $("footer").animate({opacity: 1.0}, 1000);
       $("#hint").animate({opacity: 1.0}, 1000);
+      var hash = window.location.hash;
+      if (hash !== "")
+        $("#search").val(hash.slice(1))
       update_rhymes();
-
     })
     $("#search").blur(function() {
       setTimeout(function () {
